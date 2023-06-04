@@ -1,5 +1,5 @@
 # Multiview Ball Calibration
-Here is a python + opencv toolbox that can help you calibrate your multi-camera extrinsic parameters. All 2D and 3D position data are `numpy array` based, so the calibration and reconstruction would be fast.
+Here is a python + opencv toolbox that can help you calibrate your multi-camera extrinsic parameters. All 2D and 3D position data are `numpy array` based.
 
 ![ball move](src_images/ball_move.gif)
 ![bundle ajust](src_images/bundle_adjust.jpg)
@@ -24,6 +24,7 @@ You can use `single-ball` or `triple-ball`.
 ![ball_define](src_images/ball_define.jpg)
 
 
+
 ## Tutorial
 The test data is contained in the tutorial. 
 
@@ -46,10 +47,18 @@ See the `3_worldaxes_register/worldaxes_register.ipynb`. You will get the refine
 See the `4_transform_between2D_and_3D/mutual_transform_2D_3D.ipynb`
 
 
+## Performance and Precision
+All 2D and 3D position data are `numpy array` based, so the calibration and reconstruction would be fast.
+The calibration error is `0.6 mm` in 3D construction, and `1.6 pixel` in 2D image projection. Only 50-100 time slice ball-allview samples are enough for calibration. 
+
+![performance](src_images/performance.jpg)
+
+
 ## Adapt to your own data
 1. Your multiview videos, sure. All cameras should be synchronized. I recommend your to use OBS Studio grid arange the cameras and record into one file.
 2. One `checkboard`. It's for `intrinsic` calibration. Also, it's for `world axes` registration.
 3. One `single-ball` or one `triple-ball`. And also a ball detection software. In my case, I use `open-mmlab/mmpose`, it offer 1000 images/sec ball detection. The config of mmpose is not release in this code yet.
+4. No ball detection in you case? Manually label 50 time slice ball-all-view samples. And extract the positions into a numpy array as (NVIEW, NSAMPLE, 1, XYP).
 
 ## Aknowledgement
 - Great work from https://github.com/cvlab-epfl/multiview_calib .

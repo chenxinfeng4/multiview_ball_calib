@@ -3,7 +3,7 @@
 import numpy as np
 import pickle
 import os.path as osp
-from lilab.multiview_scripts_dev.s6_calibpkl_predict import CalibPredict
+from multiview_calib.calibpkl_predict import CalibPredict
 from multiview_calib.extrinsics_short import global_registration_np
 import cv2
 import argparse

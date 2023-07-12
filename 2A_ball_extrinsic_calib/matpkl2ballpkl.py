@@ -108,7 +108,7 @@ def convert(matfile, intrinsics_json, setup_json, global_time=None):
     if global_time is None:
         global_time = [0, 0, 0, 0, 0] # obsoleted feature
     intrinsics_json = json.load(open(intrinsics_json, 'r'))
-    setup_json = json.load(open(setup_json, 'r'))
+    setup_json_data = json.load(open(setup_json, 'r'))
 
     keypoint, fps, vfile, views_xywh = load_mat(matfile)
     keypoint_xy_global, keypoint_xy_move, global_index = split_keypoint(keypoint, fps, global_time)
@@ -123,7 +123,7 @@ def convert(matfile, intrinsics_json, setup_json, global_time=None):
                'global_iframe': global_index,                    # TIME, obsoleted feature
                'landmarks_global_cm':  fitball_xyz_global,        # TIMExXYZ
                'background_img': background_img,                 # VIEWxHxWx3
-               'setup': setup_json,                         # setup.json content
+               'setup': setup_json_data,                         # setup.json content
                'intrinsics': intrinsics_json,               # intrinsics.json content
                }
     outfile = osp.splitext(matfile)[0] + '.ballpkl'

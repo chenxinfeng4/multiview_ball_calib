@@ -19,7 +19,7 @@ def calibration(imageFolder, board_size):
     os.makedirs(outdir, exist_ok=True)
 
     # 获取图片路径
-    images = glob.glob(osp.join(imageFolder, '*.jpg'))
+    images = glob.glob(osp.join(imageFolder, '*.jpg')) + glob.glob(osp.join(imageFolder, '*.png'))
     # %%设置物体点坐标, square_size 不会影响相机内参
     object_corners = np.zeros((board_size[0]*board_size[1], 3), np.float32)
     object_corners[:, :2] = np.mgrid[0:board_size[0], 0:board_size[1]].T.reshape(-1, 2)

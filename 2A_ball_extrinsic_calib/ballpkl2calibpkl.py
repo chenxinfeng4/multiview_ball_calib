@@ -484,7 +484,7 @@ def landmark_to_numpy(landmarks_global_xy:dict):
 
 
 def a6_global_regist_short(ba_poses, landmarks_global_xy, landmarks_global_mm):
-    from lilab.multiview_scripts_dev.s6_calibpkl_predict import CalibPredict
+    from multiview_calib.calibpkl_predict import CalibPredict
     calibPredict = CalibPredict({'ba_poses':ba_poses})
     landmarks_np = landmark_to_numpy(landmarks_global_xy)
     landmarks_3d = calibPredict.p2d_to_p3d(landmarks_np)

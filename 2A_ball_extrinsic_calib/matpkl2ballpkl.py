@@ -16,7 +16,7 @@ def load_mat(matfile):
     keypoint = data['keypoints'].copy()
     fps = data['info']['fps']
     vfile = osp.splitext(matfile)[0] + '.mp4'
-    views_xywh = data['views_xywh']
+    views_xywh = data['views_xywh'].astype(int)
 
     assert keypoint.ndim == 4 and keypoint.shape[2] == 1, "Only one class and one instance is supported"
     assert keypoint.shape[-1] == 3, "xyp is expected"
@@ -43,7 +43,10 @@ def split_keypoint(keypoint, fps, global_time):
         global_index = np.array(global_time, dtype=int)
         move_index = int(move_time)
     keypoint_xy_global = keypoint_xy[:, global_index, :]      # VIEWxTIMExXY
-    keypoint_xy_move = keypoint_xy[:, move_index:(-5*30), :]  # VIEWxTIMExXY
+    if keypoint_xy.shape[1] > 1000:
+        keypoint_xy_move = keypoint_xy[:, move_index:(-5*30), :]  # VIEWxTIMExXY
+    else:
+        keypoint_xy_move = keypoint_xy
     return keypoint_xy_global, keypoint_xy_move, global_index
 
 
@@ -75,15 +78,15 @@ def get_background_img(global_iframe, vfile, views_xywh):
 
 
 def downsampe_keypoint(keypoint_xy_move):
+    ind_notnan = ~np.isnan(keypoint_xy_move[:,:,0]) #(nview, nframe)
+    ind_3notnan = np.sum(ind_notnan, axis=0) >=4
+    keypoint_xy_move = keypoint_xy_move[:, ind_3notnan]
     ind_notnan = np.isnan(keypoint_xy_move[:,:,0]) #(nview, nframe)
-    ind_3notnan = np.sum(ind_notnan, axis=1) >=4
-    
-    keypoint_xy_move = keypoint_xy_move[ind_3notnan]
-    ind_notnan = np.isnan(keypoint_xy_move[:,:,0]) #(nview, nframe)
-
+    nframe = keypoint_xy_move.shape[1]
     mycase=1
     nchoose=1000
-    if mycase==0:
+
+    if mycase==0 or nframe<nchoose:
         keypoint_xy_move_downsample = keypoint_xy_move
     elif mycase==1:
         keypoint_xy_move_downsample = keypoint_xy_move[:,::3,:]

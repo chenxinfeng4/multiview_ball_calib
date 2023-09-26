@@ -31,16 +31,7 @@ def get_view_xywh_1280x800x9():
     return crop_xywh
 
 # %%
-def convert(vfile, intrinsic_json, board_size, square_size):
-    vid = cv2.VideoCapture(vfile)
-    ret, img = vid.read()
-    assert ret, "Failed to read frame {}".format(0)
-    crop_xywh_l = get_view_xywh_1280x800x9()
-    intrinces_dict = json.load(open(intrinsic_json, 'r'))
-
-    # get the crop image by crop_xywh
-    img_crop_l = [img[xywh[1]:xywh[1]+xywh[3], xywh[0]:xywh[0]+xywh[2], :] for xywh in crop_xywh_l]
-
+def __convert(img_crop_l, intrinces_dict, board_size, square_size, outdir):
     # all the image are the checkboard image, so we next detect the corner of the checkboard using cv2
     object_corners = np.zeros((board_size[0]*board_size[1], 3), np.float32)
     object_corners[:, :2] = np.mgrid[0:board_size[0], 0:board_size[1]].T.reshape(-1, 2)
@@ -108,7 +99,7 @@ def convert(vfile, intrinsic_json, board_size, square_size):
             cv2.line(img_corrected, origin_point, z_axis_end_point, (255, 0, 0), 3)  # 绘制Z轴 color blue
             cv2.putText(img_corrected, 'Z', z_axis_end_point, cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
-            cv2.imwrite(osp.join(osp.dirname(vfile), f'global_ref_axis{i}.jpg'), img_corrected)
+            cv2.imwrite(osp.join(outdir, f'global_ref_axis{i}.jpg'), img_corrected)
 
     keypoint_xyz = object_corners
 
@@ -119,9 +110,40 @@ def convert(vfile, intrinsic_json, board_size, square_size):
 
     detected_nviews = np.sum(~np.isnan(keypoint_xy[:,0,0]))
     assert detected_nviews>=2, 'Not enough checkboard detected, maybe wrong board_size.'
-    outpkl = osp.splitext(vfile)[0]+'.globalrefpkl'
+    outpkl = outdir + osp.splitext(vfile)[0]+'.globalrefpkl'
+    outpkl = osp.join(outdir, f'calibration.globalrefpkl')
     with open(outpkl, 'wb') as f:
         pickle.dump(outdict, f)
+
+
+def convert_from_img(img_folder, intrinsic_json, board_size, square_size):
+    import glob
+    intrinces_dict = json.load(open(intrinsic_json, 'r'))
+    nview = len(intrinces_dict)
+    img_files = []
+    for iview in range(nview):
+        img_file = glob.glob(osp.join(img_folder, f'{iview}.jpg')) + \
+                   glob.glob(osp.join(img_folder, f'{iview}.jpeg')) + \
+                    glob.glob(osp.join(img_folder, f'{iview}.bmp')) + \
+                   glob.glob(osp.join(img_folder, f'{iview}.png'))
+        assert len(img_file) == 1
+        img_files.append(img_file[0])
+
+    img_crop_l = [cv2.imread(img_file) for img_file in img_files]
+    __convert(img_crop_l, intrinces_dict, board_size, square_size, img_folder)
+
+
+def convert(vfile, intrinsic_json, board_size, square_size):
+    vid = cv2.VideoCapture(vfile)
+    ret, img = vid.read()
+    assert ret, "Failed to read frame {}".format(0)
+    crop_xywh_l = get_view_xywh_1280x800x9()
+    intrinces_dict = json.load(open(intrinsic_json, 'r'))
+
+    # get the crop image by crop_xywh
+    img_crop_l = [img[xywh[1]:xywh[1]+xywh[3], xywh[0]:xywh[0]+xywh[2], :] for xywh in crop_xywh_l]
+    __convert(img_crop_l, intrinces_dict, board_size, square_size, osp.dirname(vfile))
+
 
 
 if __name__ == '__main__':

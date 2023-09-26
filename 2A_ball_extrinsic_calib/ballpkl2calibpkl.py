@@ -67,7 +67,11 @@ def ba_poses_to_intrin_extrin(ba_poses):
 
 def intri_extrin_to_ba_poses(intrin, extrin):
     views = set(intrin.keys()) & set(extrin.keys())
-    ba_poses = {view:{'K':intrin[view]['K'], 'dist':intrin[view]['dist'], 'R':extrin[view]['R'], 't':extrin[view]['t']}
+    ba_poses = {view:{'K':intrin[view]['K'], 
+                      'dist':intrin[view]['dist'], 
+                      'R':extrin[view]['R'], 
+                      't':extrin[view]['t'],
+                      'image_shape': intrin[view]['image_shape']}
                  for view in views}
     return ba_poses
 
@@ -376,8 +380,13 @@ def a3_bundle_ajustment(
     logging.info("Reprojection errors (mean+-std pixels):")
     ba_poses = {}
     for i,(view, cp) in enumerate(zip(views, new_camera_params)):
+        print('pose keys', pose[view].keys())
         K, R, t, dist = unpack_camera_params(cp)
-        ba_poses[view] = {"R":R.tolist(), "t":t.tolist(), "K":K.tolist(), "dist":dist.tolist()}
+        ba_poses[view] = {  "R":R.tolist(),
+                            "t":t.tolist(), 
+                            "K":K.tolist(),
+                            "dist":dist.tolist(),
+                            "image_shape": pose[view]["image_shape"]}
         
         points3d = new_points_3d[point_indices[camera_indices==i]]
         points2d = points_2d[camera_indices==i]

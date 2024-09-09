@@ -6,7 +6,10 @@ Here is a python + opencv toolbox that can help you calibrate your multi-camera 
 ![3D camera space](src_images/cameras_3d_show.jpg)
 ![transform](src_images/transform_2D_3D.jpg)
 
+# Bilibili video link (B站视频链接)
+singleball + global registion: [Video#1](https://www.bilibili.com/video/BV15i421v7xo/)
 
+doubleball: [Video#2](https://www.bilibili.com/video/BV1e1421b7cv/)
 
 ## Python package install
 I've assume that you've installed basic libs, like `opencv`, `numpy`, `scipy`. Here is the multive calib package, just install it.
@@ -18,11 +21,17 @@ pip install -U git+https://github.com/chenxinfeng4/multiview_calib
 ## Ball define and detect
 You can use `single-ball` or `triple-ball`. 
 
-!!! **The ball detector is not contain in this code**, so you should manually give me the position of ball in each view. 
+Routine:
+![routine](src_images/routine.jpg)
 
-> The `single-ball` or `triple-ball` are most the some pipeline. Except the triple-ball can restore the scale information. It will be helpful when you don't care about the world origin point and axes direction. Other wise I recommand you to use `single-ball` plus `checkboard`, which can onstep register `world axes`.
+
+!!! **The ball detector is not contain in this code**, so you should manually give me the position of ball in each view. You can use YOLO-v8 to detect.
+
+> The `single-ball`, `double-ball` or `triple-ball` are most the some pipeline. Except the double/triple-ball can restore the scale information. It will be helpful when you don't care about the world origin point and axes direction. Other wise I recommand you to use `single-ball` plus `checkboard`, which can onstep register `world axes`.
+
 
 ![ball_define](src_images/ball_define.jpg)
+![ball_define](src_images/doubleball.jpg)
 
 
 
@@ -62,7 +71,7 @@ The calibration error is `0.6 mm` in 3D construction, and `1.6 pixel` in 2D imag
 4. No ball detection in you case? Manually label 50 time slice ball-all-view samples. And extract the positions into a numpy array as (NVIEW, NSAMPLE, 1, XYP).
 
 ## Aknowledgement
-- Great work from https://github.com/cvlab-epfl/multiview_calib .
+- Great work of https://github.com/cvlab-epfl/multiview_calib .
 
 ## Extent readings
 - [Single-ball calibration] Perez-Cortes, Juan-Carlos, et al. "A system for in-line 3D inspection without hidden surfaces." Sensors 18.9 (2018): 2993.

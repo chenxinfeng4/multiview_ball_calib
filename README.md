@@ -19,7 +19,7 @@ pip install -U git+https://github.com/chenxinfeng4/multiview_calib
 ```
 
 ## Ball define and detect
-You can use `single-ball` or `triple-ball`. 
+You can use `single-ball`, `double-ball` or `triple-ball`. 
 
 Routine:
 ![routine](src_images/routine.jpg)

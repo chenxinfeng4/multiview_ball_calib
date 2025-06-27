@@ -56,6 +56,11 @@ See the `3_worldaxes_register/worldaxes_register.ipynb`. You will get the refine
 ### Step4: Mutural Transform 2D ⇌ 3D
 See the `4_transform_between2D_and_3D/mutual_transform_2D_3D.ipynb`
 
+### Step5: Visualize the Camera model
+See the `5_plot_camera3D/plot_camera3D.ipynb`
+
+### Step6: Convert file format for `Anipose/Deeplabcut/DANNCE`
+See the `6_export_ANIPOSE_DEEPLABCUT_DANNCE/convert_model_file.ipynb`
 
 ## Performance and Precision
 All 2D and 3D position data are `numpy array` based, so the calibration and reconstruction would be fast.
@@ -67,7 +72,7 @@ The calibration error is `0.6 mm` in 3D construction, and `1.6 pixel` in 2D imag
 ## Adapt to your own data
 1. Your multiview videos, sure. All cameras should be synchronized. I recommend your to use OBS Studio grid arange the cameras and record into one file.
 2. One `checkboard`. It's for `intrinsic` calibration. Also, it's for `world axes` registration.
-3. One `single-ball` or one `triple-ball`. And also a ball detection software. In my case, I use `open-mmlab/mmpose`, it offer 1000 images/sec ball detection. The config of mmpose is not release in this code yet.
+3. One `single-ball` or one `triple-ball`. And also a ball detection software. In my case, I use `open-mmlab/mmpose` and `YOLO-v8` to detect the ball and extract the center position. They offer 1000 images/sec ball detection. The config of mmpose/YOLO-v8 is not release in this turorial yet.
 4. No ball detection in you case? Manually label 50 time slice ball-all-view samples. And extract the positions into a numpy array as (NVIEW, NSAMPLE, 1, XYP).
 
 ## Aknowledgement
